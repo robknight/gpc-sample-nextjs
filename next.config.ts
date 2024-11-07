@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import CopyPlugin from "copy-webpack-plugin";
+import path from "path";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -20,6 +22,19 @@ const nextConfig: NextConfig = {
         worker_threads: require.resolve('worker_threads'),
       };
     }
+    const artifactPackageJsonPath = require.resolve('@pcd/proto-pod-gpc-artifacts/package.json');
+    const artifactPath = path.dirname(artifactPackageJsonPath);
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: [
+          { 
+            from: artifactPath, 
+            to: path.join(__dirname, 'public/artifacts'),
+            force: true
+          }
+        ]
+      })
+    );
     return config;
   },
   serverExternalPackages: ["web-worker"]
